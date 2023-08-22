@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player_movement : MonoBehaviour
@@ -26,13 +27,17 @@ public class Player_movement : MonoBehaviour
     private float jumpForce = 0f;
     private bool isJumping = false;
 
-    
+
+    private Vector3 originalScale;
+
     // Start is called before the first frame update
     void Start()
     {
         animator = GetComponent<Animator>();
         player = GetComponent<Rigidbody2D>();
         coll = GetComponent<BoxCollider2D>();
+
+        originalScale = transform.localScale;
     }
 
     // Update is called once per frame
@@ -43,6 +48,15 @@ public class Player_movement : MonoBehaviour
         {
             //This gets the position of our character
             dirX = Input.GetAxisRaw("Horizontal");
+
+            if (dirX < 0) // Movimiento a la izquierda
+            {
+                transform.localScale = new Vector3(-originalScale.x, originalScale.y, originalScale.z);
+            }
+            else if (dirX > 0) // Movimiento a la derecha
+            {
+                transform.localScale = originalScale;
+            }
             //Moving our character based on its position
             player.velocity = new Vector2(dirX * moveSpeed, player.velocity.y);
         } else
@@ -52,9 +66,10 @@ public class Player_movement : MonoBehaviour
         }
 
         //Jumping mechanics
-        if(Input.GetKeyDown("space") && !isJumping )
+        if(Input.GetKeyDown("space") && !isJumping && IsGrounded())
         {
             isJumping = true;
+            animator.SetBool("IsJumping", true);
         }
 
         if(isJumping)
@@ -64,7 +79,7 @@ public class Player_movement : MonoBehaviour
         }
 
         //verify when the space key is not on anymore
-        if(Input.GetKeyUp("space") && isJumping && IsGrounded())
+        if (Input.GetKeyUp("space") && isJumping && IsGrounded())
         {
             Jump();
         }
@@ -76,12 +91,12 @@ public class Player_movement : MonoBehaviour
     private void Jump()
     {
         // Apply vertical force for the jump
+        int jumpDirection = Mathf.RoundToInt(dirX);
         player.AddForce(Vector2.up * Mathf.Min(jumpForce, maxJumpForce), ForceMode2D.Impulse);
 
         // Reinitiate the values
         jumpForce = 0f;
         isJumping = false;
-
     }
 
     private bool IsGrounded()
@@ -89,19 +104,43 @@ public class Player_movement : MonoBehaviour
         //Create a box similar to the box collider
         return Physics2D.BoxCast(coll.bounds.center, coll.bounds.size, 0f, Vector2.down,  .1f, jumpableGround);
     }
-
+  
     private void updateAnimation()
     {
-        if(player.velocity.y > .1f)
-        {
-            //It's jumping
-            SwitchToJumpAnimation();
-        } 
 
-        if (player.velocity.y < -.1f)
+        if (IsGrounded())
         {
-            //It's falling / on the ground
-            SwitchToIdleAnimation();
+            // Está en el suelo
+            if (jumpForce != 0f)
+            {
+                // Está preparando para saltar
+                SwitchToJumpAnimation();
+            }
+            else if (jumpForce == 0 && IsGrounded() == true)
+            {
+                // Acaba de aterrizar
+                SwitchToIdleAnimation();
+
+            }
+
+        }
+        else
+        {
+            // Está en el aire
+            if (player.velocity.y > 0f)
+            {
+                // Está saltando
+                SwitchToJumpAnimation();
+                animator.SetBool("IsJumping", true);
+
+            }
+            else
+            {
+                // Está cayendo
+                SwitchToJumpAnimation();
+                animator.SetBool("IsJumping", false);
+
+            }
         }
     }
 
@@ -114,4 +153,5 @@ public class Player_movement : MonoBehaviour
     {
         animator.runtimeAnimatorController = idleController;
     }
+
 }
