@@ -28,7 +28,7 @@ public class Player_movement : MonoBehaviour
     private bool isJumping = false;
 
 
-    private Vector3 originalScale;
+    private Vector3 originalScale; // Left or right scale
 
     // Start is called before the first frame update
     void Start()
@@ -49,11 +49,11 @@ public class Player_movement : MonoBehaviour
             //This gets the position of our character
             dirX = Input.GetAxisRaw("Horizontal");
 
-            if (dirX < 0) // Movimiento a la izquierda
+            if (dirX < 0) // Left Movement
             {
                 transform.localScale = new Vector3(-originalScale.x, originalScale.y, originalScale.z);
             }
-            else if (dirX > 0) // Movimiento a la derecha
+            else if (dirX > 0) // Right Movement
             {
                 transform.localScale = originalScale;
             }
@@ -110,15 +110,14 @@ public class Player_movement : MonoBehaviour
 
         if (IsGrounded())
         {
-            // Está en el suelo
             if (jumpForce != 0f)
             {
-                // Está preparando para saltar
+                // Preparing to jump
                 SwitchToJumpAnimation();
             }
             else if (jumpForce == 0 && IsGrounded() == true)
             {
-                // Acaba de aterrizar
+                // Just Landed
                 SwitchToIdleAnimation();
 
             }
@@ -126,17 +125,17 @@ public class Player_movement : MonoBehaviour
         }
         else
         {
-            // Está en el aire
+            // In the air
             if (player.velocity.y > 0f)
             {
-                // Está saltando
+                // It's jumping
                 SwitchToJumpAnimation();
                 animator.SetBool("IsJumping", true);
 
             }
             else
             {
-                // Está cayendo
+                // It's falling down
                 SwitchToJumpAnimation();
                 animator.SetBool("IsJumping", false);
 
