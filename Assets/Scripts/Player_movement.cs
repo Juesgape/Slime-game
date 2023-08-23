@@ -19,16 +19,17 @@ public class Player_movement : MonoBehaviour
     public RuntimeAnimatorController jumpController;
     private Animator animator;
 
-
+        
     //movement force
     private float dirX = 0f;
     [SerializeField] private float moveSpeed = 10f;
     [SerializeField] private float maxJumpForce = 20f;
     private float jumpForce = 0f;
     private bool isJumping = false;
-
+    public PhysicsMaterial2D bounce, normal;
 
     private Vector3 originalScale; // Left or right scale
+
 
     // Start is called before the first frame update
     void Start()
@@ -68,14 +69,31 @@ public class Player_movement : MonoBehaviour
         //Jumping mechanics
         if(Input.GetKeyDown("space") && !isJumping && IsGrounded())
         {
+            
             isJumping = true;
             animator.SetBool("IsJumping", true);
+            
         }
 
         if(isJumping)
         {
             //Adding up the jump force
+            player.velocity = new Vector2(0.0f, player.velocity.y);
             jumpForce += Time.deltaTime * 50f;
+        }
+
+        if(jumpForce == 0 && IsGrounded())
+        {
+            player.velocity = new Vector2(dirX * moveSpeed, player.velocity.y);
+        }
+        
+        if(IsGrounded()== false)
+        {
+            player.sharedMaterial = bounce;
+        }
+        else
+        {
+            player.sharedMaterial = normal;
         }
 
         //verify when the space key is not on anymore
@@ -83,6 +101,9 @@ public class Player_movement : MonoBehaviour
         {
             Jump();
         }
+
+
+        
 
         //Animation controller
         updateAnimation();
