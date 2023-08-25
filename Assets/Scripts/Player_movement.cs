@@ -61,29 +61,6 @@ public class Player_movement : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if(collision.gameObject.CompareTag("slime_enemy"))
-        {
-            isCollidingWithSlimeEnemy = true;
-
-            // Calculate the direction from the player to the slime_enemy
-            Vector2 pushDirection = (transform.position - collision.transform.position).normalized;
-
-            // Apply a force to the player's Rigidbody to push them off
-            player.AddForce(pushDirection * 20f, ForceMode2D.Force);
-
-        }
-    }
-
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("slime_enemy"))
-        {
-            isCollidingWithSlimeEnemy = false;
-        }
-    }
-
     private void mainPlayerMovements()
     {
         //We can move horizontally if the character is not falling
@@ -187,6 +164,18 @@ public class Player_movement : MonoBehaviour
         {
             isOnRamp = true;
         }
+
+        if (collision.gameObject.CompareTag("slime_enemy"))
+        {
+            isCollidingWithSlimeEnemy = true;
+
+            // Calculate the direction from the player to the slime_enemy
+            Vector2 pushDirection = (transform.position - collision.transform.position).normalized;
+
+            // Apply a force to the player's Rigidbody to push them off
+            player.AddForce(pushDirection * 20f, ForceMode2D.Force);
+
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -194,6 +183,11 @@ public class Player_movement : MonoBehaviour
         if (collision.gameObject.CompareTag("Ramp"))
         {
             isOnRamp = false;
+        }
+
+        if (collision.gameObject.CompareTag("slime_enemy"))
+        {
+            isCollidingWithSlimeEnemy = false;
         }
     }
 
