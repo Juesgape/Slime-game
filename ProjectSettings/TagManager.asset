@@ -4,6 +4,11 @@
 TagManager:
   serializedVersion: 2
   tags:
+  - Ground
+  - JumpPad
+  - Background
+  - Ramp
+  tags:
   - slime_enemy
   layers:
   - Default
@@ -14,7 +19,7 @@ TagManager:
   - UI
   - Background
   - Terrain
-  - 
+  - WallBounce
   - 
   - 
   - 

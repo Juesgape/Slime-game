@@ -19,18 +19,23 @@ public class Player_movement : MonoBehaviour
     public RuntimeAnimatorController jumpController;
     private Animator animator;
 
-
+        
     //movement force
     private float dirX = 0f;
-    [SerializeField] private float moveSpeed = 10f;
+    [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float maxJumpForce = 20f;
     private float jumpForce = 0f;
     private bool isJumping = false;
+    public PhysicsMaterial2D bounce, normal, friction;
     //This variable will set to true or false depending if the player is colliding with the slime_enemy
     private bool isCollidingWithSlimeEnemy = false;
 
 
     private Vector3 originalScale; // Left or right scale
+
+    // Ramp variables
+    public float slideForce = 1f;
+    private bool isOnRamp = false;
 
     // Start is called before the first frame update
     void Start()
@@ -89,11 +94,16 @@ public class Player_movement : MonoBehaviour
 
             if (dirX < 0) // Left Movement
             {
-                transform.localScale = new Vector3(-originalScale.x, originalScale.y, originalScale.z);
+                transform.localScale = new Vector2 (-originalScale.x, originalScale.y);
             }
             else if (dirX > 0) // Right Movement
             {
                 transform.localScale = originalScale;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
+            {
+                isJumping = true; // Activar el salto
             }
             //Moving our character based on its position
             player.velocity = new Vector2(dirX * moveSpeed, player.velocity.y);
@@ -107,14 +117,30 @@ public class Player_movement : MonoBehaviour
         //Jumping mechanics
         if (Input.GetKeyDown("space") && !isJumping && IsGrounded())
         {
+            
             isJumping = true;
-            animator.SetBool("IsJumping", true);
+            
         }
 
         if (isJumping)
         {
             //Adding up the jump force
+            player.velocity = new Vector2(0.0f, player.velocity.y);
             jumpForce += Time.deltaTime * 50f;
+        }
+
+        if(jumpForce == 0 && IsGrounded())
+        {
+            player.velocity = new Vector2(dirX * moveSpeed, player.velocity.y);
+        }
+        
+        if(IsGrounded()== false && player.velocity.y > 0f)
+        {
+            player.sharedMaterial = bounce;
+        }
+        else
+        {
+            player.sharedMaterial = normal;
         }
 
         //verify when the space key is not on anymore
@@ -123,6 +149,23 @@ public class Player_movement : MonoBehaviour
             Jump();
         }
 
+        if (isOnRamp)
+        {
+            dirX = 0f;
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                isJumping = false;
+            }
+
+            // Aplicar la fuerza en la dirección opuesta a la rampa usando Impulse
+            player.AddForce(new Vector2(-0.5f, -0.5f) * slideForce, ForceMode2D.Impulse);
+
+        }
+        else
+        {
+            dirX = Input.GetAxisRaw("Horizontal");
+        }
         //Animation controller
         updateAnimation();
     }
@@ -136,6 +179,22 @@ public class Player_movement : MonoBehaviour
         // Reinitiate the values
         jumpForce = 0f;
         isJumping = false;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ramp"))
+        {
+            isOnRamp = true;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ramp"))
+        {
+            isOnRamp = false;
+        }
     }
 
     private bool IsGrounded()
