@@ -26,6 +26,8 @@ public class Player_movement : MonoBehaviour
     [SerializeField] private float maxJumpForce = 20f;
     private float jumpForce = 0f;
     private bool isJumping = false;
+    //This variable will set to true or false depending if the player is colliding with the slime_enemy
+    private bool isCollidingWithSlimeEnemy = false;
 
 
     private Vector3 originalScale; // Left or right scale
@@ -43,8 +45,44 @@ public class Player_movement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //move normally as long as the player is not colliding with the slime_enemy
+        if(isCollidingWithSlimeEnemy)
+        {
+            //Do nothing lol
+        } 
+        else
+        {
+            mainPlayerMovements();
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.CompareTag("slime_enemy"))
+        {
+            isCollidingWithSlimeEnemy = true;
+
+            // Calculate the direction from the player to the slime_enemy
+            Vector2 pushDirection = (transform.position - collision.transform.position).normalized;
+
+            // Apply a force to the player's Rigidbody to push them off
+            player.AddForce(pushDirection * 20f, ForceMode2D.Force);
+
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("slime_enemy"))
+        {
+            isCollidingWithSlimeEnemy = false;
+        }
+    }
+
+    private void mainPlayerMovements()
+    {
         //We can move horizontally if the character is not falling
-        if(player.velocity.y > -.1f)
+        if (player.velocity.y > -.1f)
         {
             //This gets the position of our character
             dirX = Input.GetAxisRaw("Horizontal");
@@ -59,20 +97,21 @@ public class Player_movement : MonoBehaviour
             }
             //Moving our character based on its position
             player.velocity = new Vector2(dirX * moveSpeed, player.velocity.y);
-        } else
+        }
+        else
         {
             //Make the velocity in the X axis 0 so the player falls vertically
             player.velocity = new Vector2(0f, player.velocity.y);
         }
 
         //Jumping mechanics
-        if(Input.GetKeyDown("space") && !isJumping && IsGrounded())
+        if (Input.GetKeyDown("space") && !isJumping && IsGrounded())
         {
             isJumping = true;
             animator.SetBool("IsJumping", true);
         }
 
-        if(isJumping)
+        if (isJumping)
         {
             //Adding up the jump force
             jumpForce += Time.deltaTime * 50f;
