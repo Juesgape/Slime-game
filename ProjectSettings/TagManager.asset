@@ -8,8 +8,8 @@ TagManager:
   - JumpPad
   - Background
   - Ramp
-  tags:
   - slime_enemy
+  - Terrain
   layers:
   - Default
   - TransparentFX

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class Player_movement : MonoBehaviour
 
@@ -17,24 +18,29 @@ public class Player_movement : MonoBehaviour
     //Animations controllers
     public RuntimeAnimatorController idleController;
     public RuntimeAnimatorController jumpController;
+    public RuntimeAnimatorController bounceController;      
+    
+    private bool isBouncing = false;
+    private bool canBounce = true;
     private Animator animator;
 
         
-    //movement force
+    //Movement force
     private float dirX = 0f;
-    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float moveSpeed = 10f;
     [SerializeField] private float maxJumpForce = 20f;
     private float jumpForce = 0f;
-    private bool isJumping = false;
+    private bool canJump = true;
+
+    // Physics materials
     public PhysicsMaterial2D bounce, normal, friction;
+    private Vector3 originalScale; // Left or right scale
+
     //This variable will set to true or false depending if the player is colliding with the slime_enemy
     private bool isCollidingWithSlimeEnemy = false;
 
-
-    private Vector3 originalScale; // Left or right scale
-
     // Ramp variables
-    public float slideForce = 1f;
+    public float slideForce = 0.1f;
     private bool isOnRamp = false;
 
     // Start is called before the first frame update
@@ -59,83 +65,85 @@ public class Player_movement : MonoBehaviour
         {
             mainPlayerMovements();
         }
+
+        // Check for bounce animation
+
+        if (isBouncing && player.sharedMaterial == bounce)
+        {
+            SwitchToBounceAnimation();
+            
+        }
     }
 
     private void mainPlayerMovements()
     {
-        //We can move horizontally if the character is not falling
-        if (player.velocity.y > -.1f)
+        dirX = Input.GetAxisRaw("Horizontal");
+
+        // Flip the sprite when changing direction
+        if (dirX < 0 && IsGrounded()) // Left Movement
         {
-            //This gets the position of our character
-            dirX = Input.GetAxisRaw("Horizontal");
-
-            if (dirX < 0) // Left Movement
-            {
-                transform.localScale = new Vector2 (-originalScale.x, originalScale.y);
-            }
-            else if (dirX > 0) // Right Movement
-            {
-                transform.localScale = originalScale;
-            }
-
-            if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
-            {
-                isJumping = true; // Activar el salto
-            }
-            //Moving our character based on its position
-            player.velocity = new Vector2(dirX * moveSpeed, player.velocity.y);
+            transform.localScale = new Vector2(-originalScale.x, originalScale.y);
         }
-        else
+        else if (dirX > 0 && IsGrounded()) // Right Movement
         {
-            //Make the velocity in the X axis 0 so the player falls vertically
-            player.velocity = new Vector2(0f, player.velocity.y);
+            transform.localScale = originalScale;
         }
 
-        //Jumping mechanics
-        if (Input.GetKeyDown("space") && !isJumping && IsGrounded())
-        {
-            
-            isJumping = true;
-            
-        }
+        // Move the player when grounded
 
-        if (isJumping)
-        {
-            //Adding up the jump force
-            player.velocity = new Vector2(0.0f, player.velocity.y);
-            jumpForce += Time.deltaTime * 50f;
-        }
-
-        if(jumpForce == 0 && IsGrounded())
+        if (jumpForce == 0.0f && IsGrounded())
         {
             player.velocity = new Vector2(dirX * moveSpeed, player.velocity.y);
         }
-        
-        if(IsGrounded()== false && player.velocity.y > 0f)
+
+        // Handle jumping
+        if (IsGrounded())
         {
-            player.sharedMaterial = bounce;
+            player.sharedMaterial = normal; // Switch to normal material on the ground
+            isBouncing = false;
+
+            if (Input.GetKey("space") && canJump == true)
+            {
+                jumpForce += Time.deltaTime * 20f;
+            }
+
+            if (jumpForce >= maxJumpForce)
+            {
+                float tempx = dirX * moveSpeed;
+                float tempy = jumpForce;
+                player.velocity = new Vector2(tempx, tempy);
+                Invoke("ResetJump", 0.05f);
+            }
+
+            if (Input.GetKeyDown("space"))
+            {
+                player.velocity = new Vector2(0.0f, player.velocity.y);
+            }
+
+            if (Input.GetKeyUp("space"))
+            {
+                player.velocity = new Vector2(dirX * moveSpeed, jumpForce);
+                jumpForce = 0.0f;
+                canJump = true;
+            }
         }
         else
         {
-            player.sharedMaterial = normal;
+
+            player.sharedMaterial = bounce; // Switch to bounce material in the air
         }
 
-        //verify when the space key is not on anymore
-        if (Input.GetKeyUp("space") && isJumping && IsGrounded())
-        {
-            Jump();
-        }
-
+        // Handle ramp movement
         if (isOnRamp)
         {
             dirX = 0f;
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                isJumping = false;
+                canJump = false;
             }
 
-            // Aplicar la fuerza en la dirección opuesta a la rampa usando Impulse
+            // Apply force in the opposite direction of the ramp using Impulse
             player.AddForce(new Vector2(-0.5f, -0.5f) * slideForce, ForceMode2D.Impulse);
 
         }
@@ -147,16 +155,13 @@ public class Player_movement : MonoBehaviour
         updateAnimation();
     }
 
-    private void Jump()
+    //Reset Jump Variables
+    void ResetJump()
     {
-        // Apply vertical force for the jump
-        int jumpDirection = Mathf.RoundToInt(dirX);
-        player.AddForce(Vector2.up * Mathf.Min(jumpForce, maxJumpForce), ForceMode2D.Impulse);
-
-        // Reinitiate the values
-        jumpForce = 0f;
-        isJumping = false;
+        canJump = false;
+        jumpForce = 0;
     }
+
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -176,8 +181,16 @@ public class Player_movement : MonoBehaviour
             player.AddForce(pushDirection * 20f, ForceMode2D.Force);
 
         }
-    }
 
+        if (collision.gameObject.CompareTag("Terrain") && player.sharedMaterial == bounce ) // Comparar con la etiqueta del suelo
+        {
+            // Verificar que no haya rebotado antes
+            isBouncing = true;
+            canBounce = false;  // Marcar que ha rebotado una vez
+            
+        }
+
+    }
     private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ramp"))
@@ -189,14 +202,20 @@ public class Player_movement : MonoBehaviour
         {
             isCollidingWithSlimeEnemy = false;
         }
+
+        if (collision.gameObject.CompareTag("Terrain") && player.sharedMaterial == bounce)
+        {
+            canBounce = true; // Habilitar el rebote cuando el personaje deje de tocar la pared
+        }
     }
 
     private bool IsGrounded()
     {
         //Create a box similar to the box collider
-        return Physics2D.BoxCast(coll.bounds.center, coll.bounds.size, 0f, Vector2.down,  .1f, jumpableGround);
+        return Physics2D.BoxCast(coll.bounds.center, coll.bounds.size, 0f, Vector2.down,  .5f, jumpableGround);
     }
-  
+
+    // Update animations based on player state
     private void updateAnimation()
     {
 
@@ -205,12 +224,12 @@ public class Player_movement : MonoBehaviour
             if (jumpForce != 0f)
             {
                 // Preparing to jump
-                SwitchToJumpAnimation();
+                SwitchToJumpAnimation(); // Preparing to jump
             }
             else if (jumpForce == 0 && IsGrounded() == true)
             {
                 // Just Landed
-                SwitchToIdleAnimation();
+                SwitchToIdleAnimation(); // Just landed
 
             }
 
@@ -235,6 +254,7 @@ public class Player_movement : MonoBehaviour
         }
     }
 
+    //Animation Switches
     private void SwitchToJumpAnimation()
     {
         animator.runtimeAnimatorController = jumpController;
@@ -243,6 +263,11 @@ public class Player_movement : MonoBehaviour
     private void SwitchToIdleAnimation()
     {
         animator.runtimeAnimatorController = idleController;
+    }
+
+    private void SwitchToBounceAnimation()
+    {
+        animator.runtimeAnimatorController = bounceController;
     }
 
 }
