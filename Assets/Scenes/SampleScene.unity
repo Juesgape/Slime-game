@@ -150,7 +150,7 @@ Transform:
   m_GameObject: {fileID: 283125943}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.4452, y: -28.114, z: 3.0477686}
+  m_LocalPosition: {x: -0.751235, y: -20.414, z: 3.0477686}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -325,6 +325,9 @@ GameObject:
   - component: {fileID: 482878457}
   - component: {fileID: 482878461}
   - component: {fileID: 482878462}
+  - component: {fileID: 482878463}
+  - component: {fileID: 482878464}
+  - component: {fileID: 482878465}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -465,7 +468,7 @@ Transform:
   m_GameObject: {fileID: 482878456}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.1, y: -6.77, z: 0}
+  m_LocalPosition: {x: 7.64, y: 0.93, z: 0}
   m_LocalScale: {x: 1.4959606, y: 1.8539082, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -486,9 +489,6 @@ MonoBehaviour:
   jumpableGround:
     serializedVersion: 2
     m_Bits: 128
-  idleController: {fileID: 9100000, guid: 89aaebe355d346b40af738d224f2010f, type: 2}
-  jumpController: {fileID: 9100000, guid: 85bd361a0bf30544b850a9e0d2fd57f5, type: 2}
-  bounceController: {fileID: 9100000, guid: d06ad807569245c44ba1c02922f19cbb, type: 2}
   moveSpeed: 7
   maxJumpForce: 20
   bounce: {fileID: 6200000, guid: 8740c6ec358d14e4bbe6184bfba5d811, type: 2}
@@ -516,6 +516,49 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &482878463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 482878456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 389666925a9567246930467a97921183, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &482878464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 482878456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4aab76c18b667e4cad076ef69f29a2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &482878465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 482878456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d979c85a5a51d134eaea37811a712455, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  idleController: {fileID: 9100000, guid: 89aaebe355d346b40af738d224f2010f, type: 2}
+  jumpController: {fileID: 9100000, guid: 85bd361a0bf30544b850a9e0d2fd57f5, type: 2}
+  bounceController: {fileID: 9100000, guid: d06ad807569245c44ba1c02922f19cbb, type: 2}
+  bounce: {fileID: 0}
+  jumpableGround:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1 &483249045
 GameObject:
   m_ObjectHideFlags: 0
@@ -8211,7 +8254,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.1081114, y: -2.8418303, z: -10}
+  m_LocalPosition: {x: 0.89497757, y: 22.707224, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8426,17 +8469,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2873163611227410772, guid: d8b801209e874a44da39ded72051df49, type: 3}
+      propertyPath: sl_speed
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 3577263843950024644, guid: d8b801209e874a44da39ded72051df49, type: 3}
       propertyPath: m_Name
       value: Slime_enemy
       objectReference: {fileID: 0}
     - target: {fileID: 8717969858931559101, guid: d8b801209e874a44da39ded72051df49, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.88
+      value: -4.39
       objectReference: {fileID: 0}
     - target: {fileID: 8717969858931559101, guid: d8b801209e874a44da39ded72051df49, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 56.75
+      value: 1.16
       objectReference: {fileID: 0}
     - target: {fileID: 8717969858931559101, guid: d8b801209e874a44da39ded72051df49, type: 3}
       propertyPath: m_LocalPosition.z
@@ -8541,7 +8588,7 @@ Transform:
   m_GameObject: {fileID: 975607439}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.4452, y: -2.6340008, z: 3.0477686}
+  m_LocalPosition: {x: -0.751235, y: 5.066, z: 3.0477686}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
