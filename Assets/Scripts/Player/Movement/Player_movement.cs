@@ -17,7 +17,7 @@ public class Player_movement : MonoBehaviour
 
     //Movement force
     [SerializeField] private float moveSpeed = 10f;
-    [SerializeField] private float maxJumpForce = 20f;
+    [SerializeField] private float maxJumpForce = 30f;
     private float dirX = 0f;
     private float jumpForce = 0f;
     private bool canMove = true;
@@ -56,20 +56,20 @@ public class Player_movement : MonoBehaviour
 
     private void mainPlayerMovements()
     {
-        //Basic player movements on the x axis
-        playerDirectionOnXAxis();
-
         // Handle jumping
-        jumpHandler();
+        JumpHandler();
+
+        //Basic player movements on the x axis
+        PlayerDirectionOnXAxis();
 
         // Handle ramp movement
-        rampMovementHandler();
+        RampMovementHandler();
 
         //Animation controller
-        updateAnimation();
+        UpdateAnimation();
     }
 
-    private void playerDirectionOnXAxis()
+    private void PlayerDirectionOnXAxis()
     {
         dirX = Input.GetAxisRaw("Horizontal");
 
@@ -91,12 +91,12 @@ public class Player_movement : MonoBehaviour
         }
     }
 
-    private void rampMovementHandler()
+    private void RampMovementHandler()
     {
         if (isOnRamp) // you can't move the player if it's on a ramp, right?
         {
             //disable movement for player
-            disableMovement();
+            DisableMovement();
 
             // Apply force in the opposite direction of the ramp using Impulse
             player.AddForce(new Vector2(-0.5f, -0.5f) * slideForce, ForceMode2D.Impulse);
@@ -105,21 +105,21 @@ public class Player_movement : MonoBehaviour
         }
 
         //enable movement again
-        enableMovement();
+        EnableMovement();
     }
 
 
-    private void jumpHandler()
+    private void JumpHandler()
     {
         if (IsGrounded())
         {
             player.sharedMaterial = normal; // Switch to normal material on the ground
-            disableIsBouncing();
+            DisableIsBouncing();
 
             //Allowing player to jump
             if (Input.GetKey("space") && canJump == true)
             {
-                jumpForce += Time.deltaTime * 20f;
+                jumpForce += Time.deltaTime * 40f;
             }
 
             //Don't allow the gamer to press the space key infinitely
@@ -128,7 +128,6 @@ public class Player_movement : MonoBehaviour
                 float tempx = dirX * moveSpeed;
                 float tempy = jumpForce;
                 player.velocity = new Vector2(tempx, tempy);
-                Invoke("ResetJump", 0.05f);
             }
 
             //If gamer press the space key, disable movement on the x axis
@@ -141,13 +140,17 @@ public class Player_movement : MonoBehaviour
             if (Input.GetKeyUp("space"))
             {
                 player.velocity = new Vector2(dirX * moveSpeed, jumpForce);
-                jumpForce = 0.0f;
-                canJump = true;
+                //Reset the jump force when we stop pressing the space key
+                ResetJump();
             }
 
+            //Whatever the case is, we want to eventually be able to jump
+            canJump = true;
             return;
         }
 
+        //Reset jump while the slime is not on the ground
+        ResetJump(); 
         player.sharedMaterial = bounce; // Switch to bounce material in the air
     }
 
@@ -156,7 +159,7 @@ public class Player_movement : MonoBehaviour
     private void ResetJump()
     {
         canJump = false;
-        jumpForce = 0;
+        jumpForce = 0.0f;
     }
 
     //Check if is grounded
@@ -167,7 +170,7 @@ public class Player_movement : MonoBehaviour
     }
 
     // Update animations based on player state
-    private void updateAnimation()
+    private void UpdateAnimation()
     {
         //Referencing the playerAnimation script
         Player_animation playerAnimation = GetComponent<Player_animation>();
@@ -175,7 +178,7 @@ public class Player_movement : MonoBehaviour
         if (playerAnimation != null)
         {
             //Function that controlls our player animation
-            playerAnimation.playerAnimationController();
+            playerAnimation.PlayerAnimationController();
         }
     }
 
@@ -183,40 +186,40 @@ public class Player_movement : MonoBehaviour
     //Various functions that will help us modify our variables in other scripts
     //------------------------------------------------------------------------------------------------------------------------------
     
-    public void disableMovement()
+    public void DisableMovement()
     {
         canMove = false;
     }
 
-    public void enableMovement()
+    public void EnableMovement()
     {
         canMove = true;
     }
-    public void enableIsOnRamp()
+    public void EnableIsOnRamp()
     {
         isOnRamp = true;
     }
-    public void disableIsOnRamp()
+    public void DisableIsOnRamp()
     {
         isOnRamp = false;
     }
 
-    public void enableIsBouncing()
+    public void EnableIsBouncing()
     {
         isBouncing = true;
     }
 
-    public void disableIsBouncing()
+    public void DisableIsBouncing()
     {
         isBouncing = false;
     }
 
-    public bool getIsBouncing()
+    public bool GetIsBouncing()
     {
         return isBouncing;
     }
 
-    public float getJumpForce()
+    public float GetJumpForce()
     {
         return jumpForce;
     }

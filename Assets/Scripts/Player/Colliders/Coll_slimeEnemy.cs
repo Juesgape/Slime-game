@@ -23,7 +23,7 @@ public class Coll_slimeEnemy : MonoBehaviour
 
             if (playerMovement != null)
             {
-                playerMovement.disableMovement();
+                playerMovement.DisableMovement();
             }
 
             // Calculate the direction from the player to the slime_enemy
@@ -38,6 +38,6 @@ public class Coll_slimeEnemy : MonoBehaviour
     {
         //When the player stops colliding tiwht the enemy allow it to move it
         Player_movement playerMovement = GetComponent<Player_movement>();
-        playerMovement.enableMovement();
+        playerMovement.EnableMovement();
     }
 }

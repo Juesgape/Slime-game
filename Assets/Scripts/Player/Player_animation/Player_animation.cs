@@ -1,3 +1,4 @@
+using Cinemachine.Examples;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,13 +30,13 @@ public class Player_animation : MonoBehaviour
         coll = GetComponent<BoxCollider2D>();
     }
 
-    public void playerAnimationController()
+    public void PlayerAnimationController()
     {
         //Referencing the playerMovement class
         Player_movement playerMovement = GetComponent<Player_movement>();
 
         // Check for bounce animation
-        if (playerMovement.getIsBouncing() == true && player.sharedMaterial == bounce)
+        if (playerMovement.GetIsBouncing() == true && player.sharedMaterial == bounce)
         {
             SwitchToBounceAnimation();
 
@@ -44,36 +45,38 @@ public class Player_animation : MonoBehaviour
 
         if (IsGrounded())
         {
-            if (playerMovement.getJumpForce() != 0f)
+
+            if (playerMovement.GetJumpForce() > 0f)
             {
                 // Preparing to jump
                 SwitchToJumpAnimation(); // Preparing to jump
             }
 
-            if (playerMovement.getJumpForce() == 0 && IsGrounded() == true)
+            if (playerMovement.GetJumpForce() == 0f)
             {
                 // Just Landed
                 SwitchToIdleAnimation(); // Just landed
-
             }
+
             //Finish execution
             return;
 
         }
-        // In the air
 
+        // In the air
         if (player.velocity.y > 0f)
         {
             // It's jumping
             SwitchToJumpAnimation();
             animator.SetBool("IsJumping", true);
-
-            return;
         }
 
-        // It's falling down
-        SwitchToJumpAnimation();
-        animator.SetBool("IsJumping", false);
+        if(player.velocity.y < 0f)
+        {
+            SwitchToJumpAnimation();
+            animator.SetBool("IsJumping", false);
+        }
+
     }
 
     //Check if is grounded

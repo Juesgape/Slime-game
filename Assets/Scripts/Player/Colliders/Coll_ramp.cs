@@ -22,7 +22,7 @@ public class Coll_ramp : MonoBehaviour
             Player_movement playerMovement = GetComponent<Player_movement>();
             if (playerMovement != null)
             {
-                playerMovement.enableIsOnRamp();
+                playerMovement.EnableIsOnRamp();
             }
         }
     }
@@ -30,6 +30,6 @@ public class Coll_ramp : MonoBehaviour
     private void OnCollisionExit2D(Collision2D collision)
     {
         Player_movement playerMovement = GetComponent<Player_movement>();
-        playerMovement.disableIsOnRamp();
+        playerMovement.DisableIsOnRamp();
     }
 }
