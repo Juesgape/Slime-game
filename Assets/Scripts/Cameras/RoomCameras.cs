@@ -5,12 +5,14 @@ using UnityEngine;
 public class RoomCameras : MonoBehaviour
 {
     public GameObject virtualCam;
+    public GameObject background;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if(other.CompareTag("Player") && !other.isTrigger)
         {
             virtualCam.SetActive(true);
+            background.SetActive(true);
         }
     }
 
@@ -19,6 +21,7 @@ public class RoomCameras : MonoBehaviour
         if (other.CompareTag("Player") && !other.isTrigger)
         {
             virtualCam.SetActive(false);
+            background.SetActive(false);
         }
     }
 }
