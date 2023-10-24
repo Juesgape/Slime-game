@@ -15,10 +15,7 @@ public class Shop : MonoBehaviour
         //In case the player does not have any money grant him with 900
         if (!PlayerPrefs.HasKey("totalMoney"))
         {
-            PlayerPrefs.SetInt("totalMoney", 900);
-        } else
-        {
-            PlayerPrefs.SetInt("totalMoney", 900);
+            PlayerPrefs.SetInt("totalMoney", 50);
         }
 
 

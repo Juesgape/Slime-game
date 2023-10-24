@@ -16,6 +16,9 @@ public class Skin_Controller : MonoBehaviour
     {
         if(PlayerPrefs.HasKey("currentSkin")) {
             currentSkinName = PlayerPrefs.GetString("currentSkin");
+        } else
+        {
+            PlayerPrefs.SetString("currentSkin", "green_slime");
         }
 
         //find the current player Object

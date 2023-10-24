@@ -43,6 +43,23 @@ public class Player_movement : MonoBehaviour
         coll = GetComponent<BoxCollider2D>();
 
         originalScale = transform.localScale;
+
+        if (PlayerPrefs.HasKey("initialPositionX") && PlayerPrefs.HasKey("initialPositionY"))
+        {
+            // Load the saved position from PlayerPrefs
+            float initialPositionX = PlayerPrefs.GetFloat("initialPositionX");
+            float initialPositionY = PlayerPrefs.GetFloat("initialPositionY");
+
+            // Set the initial position of the character
+            Vector2 initialPosition = new Vector2(initialPositionX, initialPositionY);
+            player.transform.position = initialPosition;
+        } else
+        {
+            // Set the default initial position
+            Vector2 defaultInitialPosition = new Vector2(-1.95f, -10.23f);
+            player.transform.position = defaultInitialPosition;
+        }
+
     }
 
     // Update is called once per frame
@@ -52,6 +69,9 @@ public class Player_movement : MonoBehaviour
         {
             mainPlayerMovements(); //Function that calls all the movements our player can make
         }
+
+        PlayerPrefs.SetFloat("initialPositionX", player.transform.position.x);
+        PlayerPrefs.SetFloat("initialPositionY", player.transform.position.y);
     }
 
     private void mainPlayerMovements()
@@ -111,11 +131,16 @@ public class Player_movement : MonoBehaviour
 
     private void JumpHandler()
     {
-        if (IsGrounded())
+
+        if(IsGrounded() && canJump == false)
         {
             player.sharedMaterial = normal; // Switch to normal material on the ground
+            player.velocity = new Vector2(0.0f, 0.0f);
             DisableIsBouncing();
+        }
 
+        if (IsGrounded())
+        {
             //Allowing player to jump
             if (Input.GetKey("space") && canJump == true)
             {

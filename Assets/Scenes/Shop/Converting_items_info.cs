@@ -37,26 +37,17 @@ public class ConvertingItemsInfo : MonoBehaviour
 
     //Onclick function that buys items whenever the user clicks the buy item button
     public void BuyItem(string itemName)
-    {
+    {  
         totalMoney -= price;
         PlayerPrefs.SetInt("totalMoney", totalMoney);
 
-        //PlayerPrefs.SetString(itemName, itemName);
+        PlayerPrefs.SetString(itemName, itemName);
 
         //Hiding the buy button cuz we already buyed the item
         buyButton.gameObject.SetActive(false);
 
         //Making equipButton visible and adding it an eventListener
         equipButton.gameObject.SetActive(true);
-    }
-
-    public void ShowPurchasedItem()
-    {
-        Debug.Log(buyButton);
-        //Hiding the buy button cuz we already buyed the item
-        buyButton.gameObject.SetActive(false);
-
-        
     }
 
     public void ShowEquippedSkin(Grid_item_info itemInfo)
