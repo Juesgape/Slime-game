@@ -19,7 +19,7 @@ public class Player_animation : MonoBehaviour
     //Physic
     public PhysicsMaterial2D bounce;
 
-    //getting the layer for the terrain 
+    //getting the layer for the terrain
     [SerializeField] private LayerMask jumpableGround;
 
     // Start is called before the first frame update
@@ -77,7 +77,6 @@ public class Player_animation : MonoBehaviour
             SwitchToJumpAnimation();
             animator.SetBool("IsJumping", false);
         }
-
     }
 
     //Check if is grounded

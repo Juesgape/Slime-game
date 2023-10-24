@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a48f301f8dcbf504790a5e55484e7a76, type: 3}
-  m_Name: red_slime
+  m_Name: green_slime
   m_EditorClassIdentifier: 
-  title: Red Slime
-  image: {fileID: 4367289792872251007, guid: d4e8a5c5eececab46942986a743fd7d8, type: 3}
-  price: 1
-  equipped: 0
+  title: Green Slime
+  image: {fileID: -9074539206338946419, guid: c80534141f80d28489b1ef92f8ff7d99, type: 3}
+  price: 0
+  equipped: 1
+  buyed: 1
   convertingItemsInfo: {fileID: 0}
-  prefab: {fileID: 8848631322194327521, guid: 61af7556207a257428383e0ddf537e33, type: 3}
+  prefab: {fileID: 3654914869622065544, guid: 21a932bbc5b07c847a77ffa94c835e46, type: 3}

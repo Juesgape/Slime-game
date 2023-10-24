@@ -15,6 +15,16 @@ public class StartingScreen : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 2);
     }
 
+    public void GoToShopFromGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
+    public void BackToGameFromShop()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
+    }
+
     public void BackToMenuFromShop()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 2);

@@ -676,7 +676,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1227144480}
         m_TargetAssemblyTypeName: StartingScreen, Assembly-CSharp
-        m_MethodName: BackToMenuFromShop
+        m_MethodName: BackToGameFromShop
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -934,6 +934,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemsInformation:
+  - {fileID: 11400000, guid: 2d1d68fbcc5e9b5418e7c88b4394e06f, type: 2}
   - {fileID: 11400000, guid: 9299800ca161b394c982a9e5689721e9, type: 2}
   - {fileID: 11400000, guid: ebfbcdc814672d84d837548176de136b, type: 2}
   prefabItemShop: {fileID: 235916056886977091, guid: 07da928f55ca78d43ad3981cd21bb191, type: 3}

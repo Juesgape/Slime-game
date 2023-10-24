@@ -15,3 +15,6 @@ MonoBehaviour:
   title: Blue Slime
   image: {fileID: -7078261816480267791, guid: bfeede70efd14484683f5956b4f1194b, type: 3}
   price: 2
+  equipped: 0
+  convertingItemsInfo: {fileID: 0}
+  prefab: {fileID: 5126744224135322264, guid: a36eef384c10fcf45b1c61fc8b06cf93, type: 3}
